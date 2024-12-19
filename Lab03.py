@@ -48,9 +48,9 @@ class Account():
     
 
 class Card():
-    def __init__(self,num,pin):
+    def __init__(self,num):
         self.__card_num = num
-        self.__card_pin = pin
+        self.__card_pin = '1234'
     
     def get_card_num(self):
         return self.__card_num
@@ -86,7 +86,7 @@ for i in atm:
 
 for i in user:
     bank.get_user().append(User(i,user[i][0]))
-    bank.get_user()[-1].get_user_acc().append(Account(i,user[i][0],Card(user[i][1],user[i][2]),user[i][3]))
+    bank.get_user()[-1].get_user_acc().append(Account(user[i][1],user[i][0],Card(user[i][2]),user[i][3]))
 
 
 def insertcard(bank,card,pin):
@@ -113,7 +113,7 @@ def deposit(atm, acc, amount):
         new_balance = acc.get_acc_balance() + amount
         acc.set_acc_balance(new_balance)
         atm.set_atm_balance(atm.get_atm_balance() + amount)
-        acc.get_acc_transaction().append(f"Deposit :{amount}")
+        acc.get_acc_transaction().append(f"D :{amount}-{atm.get_atm_id()}")
         return(f"after: {new_balance}")
     else:
         return("Error")
@@ -129,7 +129,7 @@ def withdraw(atm, acc, amount):
                 new_balance = acc.get_acc_balance() - amount
                 acc.set_acc_balance(new_balance)
                 atm.set_atm_balance(atm.get_atm_balance() - amount)
-                acc.get_acc_transaction().append(f"Withdraw :{amount}")
+                acc.get_acc_transaction().append(f"W :{amount}-{atm.get_atm_id()}")
                 return(f"after: {new_balance}")
             else:
                 print("ATM Out of Money")
@@ -137,52 +137,78 @@ def withdraw(atm, acc, amount):
             return("Error")
     except:
         print("Error")
-    
-#test1
+
+
+def transfer(mach, p1,p2, amount):
+    if p1.get_acc_balance() >= amount:
+        print(f"{p1.get_acc_name()} before: {p1.get_acc_balance()}")
+        print(f"{p2.get_acc_name()} before: {p2.get_acc_balance()}")
+        p1.set_acc_balance(p1.get_acc_balance() - amount)
+        p2.set_acc_balance(p2.get_acc_balance() + amount)
+        p1.get_acc_transaction().append(f"TW :{amount} to{p2.get_acc_id()} - {mach.get_atm_id()}")
+        p2.get_acc_transaction().append(f"TD :{amount} from{p1.get_acc_id()}- {mach.get_atm_id()}")
+        print(f"{p1.get_acc_name()} after: {p1.get_acc_balance()}")
+        return(f"{p2.get_acc_name()} after: {p2.get_acc_balance()}")
+    else:
+        return("Error")
+
+def find_user(bank, id):
+    for i in bank.get_user():
+        for j in i.get_user_acc():
+            if j.get_acc_id()==id:
+                return j
+    return "Not Found"
+
+
+
+# #test1
 print("Test1")
-acc=insertcard(bank,'1234567890','12345')
+insertcard(bank,'12345','1234')
 print("-----------------")
 
 #test2
 print("Test2")
-print(deposit(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),1000))
+print(deposit(bank.get_atm()[1],insertcard(bank,'12346','1234'),1000))
 print("-----------------")
 
-#test3
+# #test3
 print("Test3")
-print(deposit(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),-1))
+print(deposit(bank.get_atm()[1],insertcard(bank,'12346','1234'),-1))
 print("-----------------")
 
 
-#test4
+# #test4
 print("Test4")
-print(withdraw(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),500))
+print(withdraw(bank.get_atm()[1],insertcard(bank,'12346','1234'),500))
 print("-----------------")
 
-#test5
+# #test5
 print("Test5")
-print(withdraw(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),2000))
+print(withdraw(bank.get_atm()[1],insertcard(bank,'12346','1234'),2000))
 print("-----------------")
 
-#test6
+# #test6
 print("Test6")
+print(transfer(bank.get_atm()[1],insertcard(bank,'12345','1234'),find_user(bank,'0987654321'),1000))
 print("-----------------")
 
-#test7
+# #test7
 print("Test7")
+key=find_user(bank,'0987654321')
+print(key.get_acc_transaction())
 print("-----------------")
 
-#test8
+# #test8
 print("Test8")
-print(insertcard(bank,'1234567890','1345'))
+print(insertcard(bank,'12346','1345'))
 print("-----------------")
 
-#test9
+# #test9
 print("Test9")
-print(withdraw(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),41000))
+print(withdraw(bank.get_atm()[1],insertcard(bank,'12346','1234'),41000))
 print("-----------------")
 
-#test10
+# #test10
 print("Test10")
 print(withdraw(bank.get_atm()[1],insertcard(bank,'0987654321','12346'),41000))
 print("-----------------")
