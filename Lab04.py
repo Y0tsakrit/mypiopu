@@ -103,10 +103,12 @@ class Account():
 
 #Subclass
 class SavingAccount(Account):
+    rate = 0.5
     def __init__(self, acc_id, acc_name, balance):
         super().__init__(acc_id, acc_name, balance)
 
 class FixDepositAccount(Account):
+    rate = 2.5
     def __init__(self, acc_id, acc_name, balance):
         super().__init__(acc_id, acc_name, balance)
 
